@@ -20,20 +20,21 @@
     var CONFIG = {"hostname":"reasonduan.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="Docker多阶段构建可以在构建镜像时，只使用工具镜像，但是不将工具镜像的内容打包到最终镜像中。这个可以减少镜像的最终大小。">
+  <meta name="description" content="除法问题 double 类型除不尽时结果为null 复杂计算时，先乘再除  数据处理 如果有多个job同时处理一个大的数据流，可以先对数据流进行清洗，对提升性能有明显效果。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Docker多阶构建">
-<meta property="og:url" content="https://reasonduan.github.io/docker/docker/Docker%E5%A4%9A%E9%98%B6%E6%9E%84%E5%BB%BA/index.html">
+<meta property="og:title" content="KSQLDB 细节整理">
+<meta property="og:url" content="https://reasonduan.github.io/ksqldb/ksqldb/KSQLDB%20%E7%BB%86%E8%8A%82%E6%95%B4%E7%90%86/index.html">
 <meta property="og:site_name" content="Reason&#39;s Blog">
-<meta property="og:description" content="Docker多阶段构建可以在构建镜像时，只使用工具镜像，但是不将工具镜像的内容打包到最终镜像中。这个可以减少镜像的最终大小。">
+<meta property="og:description" content="除法问题 double 类型除不尽时结果为null 复杂计算时，先乘再除  数据处理 如果有多个job同时处理一个大的数据流，可以先对数据流进行清洗，对提升性能有明显效果。">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2021-08-17T13:36:34.000Z">
-<meta property="article:modified_time" content="2021-08-17T13:55:27.414Z">
+<meta property="article:published_time" content="2021-08-28T13:08:23.000Z">
+<meta property="article:modified_time" content="2021-08-28T13:11:10.472Z">
 <meta property="article:author" content="Reason Duan">
-<meta property="article:tag" content="docker">
+<meta property="article:tag" content="ksql">
+<meta property="article:tag" content="ksqldb">
 <meta name="twitter:card" content="summary">
 
-<link rel="canonical" href="https://reasonduan.github.io/docker/docker/Docker%E5%A4%9A%E9%98%B6%E6%9E%84%E5%BB%BA/">
+<link rel="canonical" href="https://reasonduan.github.io/ksqldb/ksqldb/KSQLDB%20%E7%BB%86%E8%8A%82%E6%95%B4%E7%90%86/">
 
 
 <script id="page-configurations">
@@ -46,7 +47,7 @@
   };
 </script>
 
-  <title>Docker多阶构建 | Reason's Blog</title>
+  <title>KSQLDB 细节整理 | Reason's Blog</title>
   
 
 
@@ -161,7 +162,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://reasonduan.github.io/docker/docker/Docker%E5%A4%9A%E9%98%B6%E6%9E%84%E5%BB%BA/">
+    <link itemprop="mainEntityOfPage" href="https://reasonduan.github.io/ksqldb/ksqldb/KSQLDB%20%E7%BB%86%E8%8A%82%E6%95%B4%E7%90%86/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -174,7 +175,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          Docker多阶构建
+          KSQLDB 细节整理
         </h1>
 
         <div class="post-meta">
@@ -185,7 +186,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2021-08-17 21:36:34 / 修改时间：21:55:27" itemprop="dateCreated datePublished" datetime="2021-08-17T21:36:34+08:00">2021-08-17</time>
+              <time title="创建时间：2021-08-28 21:08:23 / 修改时间：21:11:10" itemprop="dateCreated datePublished" datetime="2021-08-28T21:08:23+08:00">2021-08-28</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -193,7 +194,7 @@
               </span>
               <span class="post-meta-item-text">分类于</span>
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/docker/" itemprop="url" rel="index"><span itemprop="name">docker</span></a>
+                  <a href="/categories/ksqldb/" itemprop="url" rel="index"><span itemprop="name">ksqldb</span></a>
                 </span>
             </span>
 
@@ -215,12 +216,32 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>Docker多阶段构建可以在构建镜像时，只使用工具镜像，但是不将工具镜像的内容打包到最终镜像中。这个可以减少镜像的最终大小。</p>
+        <h2 id="除法问题"><a href="#除法问题" class="headerlink" title="除法问题"></a>除法问题</h2><ul>
+<li>double 类型除不尽时结果为null</li>
+<li>复杂计算时，先乘再除</li>
+</ul>
+<h2 id="数据处理"><a href="#数据处理" class="headerlink" title="数据处理"></a>数据处理</h2><ul>
+<li>如果有多个job同时处理一个大的数据流，可以先对数据流进行清洗，对提升性能有明显效果。</li>
+</ul>
 <span id="more"></span>
 
-<h2 id="使用编号引用"><a href="#使用编号引用" class="headerlink" title="使用编号引用"></a>使用编号引用</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">FROM alpine/git</span><br><span class="line">WORKDIR /app</span><br><span class="line">RUN git clone https://github.com/spring-projects/spring-petclinic.git</span><br><span class="line"></span><br><span class="line">FROM maven:3.5-jdk-8-alpine</span><br><span class="line">WORKDIR /app</span><br><span class="line">COPY --from=0 /app/spring-petclinic /app</span><br><span class="line">RUN mvn package </span><br><span class="line"></span><br><span class="line">FROM openjdk:8-jre-alpine</span><br><span class="line">WORKDIR /app</span><br><span class="line">COPY --from=1 /app/target/spring-petclinic-1.5.1.jar /app</span><br><span class="line">CMD [&quot;java -jar spring-petclinic-1.5.1.jar&quot;] </span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h2 id="数据格式"><a href="#数据格式" class="headerlink" title="数据格式"></a>数据格式</h2><ul>
+<li>DELIMITED（逗号隔开）</li>
+<li>JSON</li>
+<li>JSON_SR（需要注册）</li>
+<li>Avro（需要注册）</li>
+<li>Protocol buffer (Protobuf)</li>
+<li>KAFKA（Kafka自带序列号）</li>
+</ul>
+<h2 id="Group-By问题"><a href="#Group-By问题" class="headerlink" title="Group By问题"></a>Group By问题</h2><p>Group field需要展示时，使用AS_VALUE()进行修饰。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">CREATE TABLE DETECTED_CLICKS AS</span><br><span class="line">    SELECT</span><br><span class="line">        IP_ADDRESS AS KEY1,</span><br><span class="line">        URL AS KEY2,</span><br><span class="line">        TIMESTAMP AS KEY3,</span><br><span class="line">        AS_VALUE(IP_ADDRESS) AS IP_ADDRESS,</span><br><span class="line">        AS_VALUE(URL) AS URL,</span><br><span class="line">        AS_VALUE(TIMESTAMP) AS TIMESTAMP</span><br><span class="line">    FROM CLICKS WINDOW TUMBLING (SIZE 2 MINUTES, RETENTION 3650 DAYS)</span><br><span class="line">    GROUP BY IP_ADDRESS, URL, TIMESTAMP</span><br><span class="line">    HAVING COUNT(IP_ADDRESS) = 1;</span><br></pre></td></tr></table></figure>
 
-<h2 id="使用别名引用"><a href="#使用别名引用" class="headerlink" title="使用别名引用"></a>使用别名引用</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">FROM alpine/git AS GET_JOB</span><br><span class="line">WORKDIR /app</span><br><span class="line">RUN git clone https://github.com/spring-projects/spring-petclinic.git</span><br><span class="line"></span><br><span class="line">FROM maven:3.5-jdk-8-alpine AS BUILD</span><br><span class="line">WORKDIR /app</span><br><span class="line">COPY --from=GET_JOB /app/spring-petclinic /app</span><br><span class="line">RUN mvn package </span><br><span class="line"></span><br><span class="line">FROM openjdk:8-jre-alpine</span><br><span class="line">WORKDIR /app</span><br><span class="line">COPY --from=BUILD /app/target/spring-petclinic-1.5.1.jar /app</span><br><span class="line">CMD [&quot;java -jar spring-petclinic-1.5.1.jar&quot;] </span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="使用Window产生Null-Value问题"><a href="#使用Window产生Null-Value问题" class="headerlink" title="使用Window产生Null Value问题"></a>使用Window产生Null Value问题</h2><p>在使用window时，我们一般会配合使用Having语句，当Having语句中包含比例时，可能会出现先满足条件后又转为不满足，因为Window的输出为Table，所以当不满足时，会生成一个只有key没有value的数据，以表示删除此条key对应的数据。<br>例如：当我们统计10分钟内，访问购物车页面占总访问的比例超过50%，并且购物车访问次数大于50次的用户时，可能某个用户前3分钟主要访问购物车，但是3分钟后几乎又不访问了。针对这种情况，会出现的结果是前3分钟统计到此用户达标，会被记录下来，但是随着后续的访问，次用户的购物车访问占比不到50%，所以又不达标了，此时会产生一条只有key没有value的kafka消息，已表示此用户又变为不达标情况。</p>
+<h2 id="Connect-jdbc-Null-Value异常"><a href="#Connect-jdbc-Null-Value异常" class="headerlink" title="Connect-jdbc Null Value异常"></a>Connect-jdbc Null Value异常</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Caused by: org.apache.kafka.connect.errors.ConnectException: No fields found using key and value schemas for table: CrawlerListNew</span><br><span class="line">	at io.confluent.connect.jdbc.sink.metadata.FieldsMetadata.extract(FieldsMetadata.java:125)</span><br><span class="line">	at io.confluent.connect.jdbc.sink.metadata.FieldsMetadata.extract(FieldsMetadata.java:62)</span><br></pre></td></tr></table></figure>
+
+<p>当我们使用Connector将ksql计算结果写入DB时，如果我们忽略key，而只需要写入value中的数据，此时遇到value为null的情况就会报上边的错误。因为kafka 中value为null的数据表示删除，所以此条数据应该做删除处理，但是我们却没有做任何处理。解决办法：我们将kafka中的key写入到db的一个字段内，这样就不会报错，同事我们有忽略了key，所以也不会做删除操作。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">key.ignore=true</span><br><span class="line">delete.enabled=true</span><br><span class="line">pk.mode=record_key</span><br><span class="line">pk.fields=KsqlKey</span><br></pre></td></tr></table></figure>
     </div>
 
     
@@ -229,7 +250,8 @@
 
       <footer class="post-footer">
           <div class="post-tags">
-              <a href="/tags/docker/" rel="tag"># docker</a>
+              <a href="/tags/ksql/" rel="tag"># ksql</a>
+              <a href="/tags/ksqldb/" rel="tag"># ksqldb</a>
           </div>
 
         
@@ -238,12 +260,12 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/hexo/hexo/Hexo%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2/" rel="prev" title="Hexo搭建个人博客">
-      <i class="fa fa-chevron-left"></i> Hexo搭建个人博客
+    <a href="/redis/redis/Sentinel%20%E6%A8%A1%E5%BC%8FCONFIG%E5%91%BD%E4%BB%A4%E8%A2%AB%E4%BF%AE%E6%94%B9/" rel="prev" title="Sentinel模式CONFIG禁用导致异常">
+      <i class="fa fa-chevron-left"></i> Sentinel模式CONFIG禁用导致异常
     </a></div>
       <div class="post-nav-item">
-    <a href="/docker/docker/Dockerfile%E8%AF%A6%E8%A7%A3/" rel="next" title="Dockerfile详解">
-      Dockerfile详解 <i class="fa fa-chevron-right"></i>
+    <a href="/ksqldb/ksqldb/%E7%AA%97%E5%8F%A3%E6%80%BB%E7%BB%93/" rel="next" title="窗口总结">
+      窗口总结 <i class="fa fa-chevron-right"></i>
     </a></div>
     </div>
       </footer>
@@ -303,7 +325,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E7%BC%96%E5%8F%B7%E5%BC%95%E7%94%A8"><span class="nav-number">1.</span> <span class="nav-text">使用编号引用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E5%88%AB%E5%90%8D%E5%BC%95%E7%94%A8"><span class="nav-number">2.</span> <span class="nav-text">使用别名引用</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%99%A4%E6%B3%95%E9%97%AE%E9%A2%98"><span class="nav-number">1.</span> <span class="nav-text">除法问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%A4%84%E7%90%86"><span class="nav-number">2.</span> <span class="nav-text">数据处理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E6%A0%BC%E5%BC%8F"><span class="nav-number">3.</span> <span class="nav-text">数据格式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Group-By%E9%97%AE%E9%A2%98"><span class="nav-number">4.</span> <span class="nav-text">Group By问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8Window%E4%BA%A7%E7%94%9FNull-Value%E9%97%AE%E9%A2%98"><span class="nav-number">5.</span> <span class="nav-text">使用Window产生Null Value问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Connect-jdbc-Null-Value%E5%BC%82%E5%B8%B8"><span class="nav-number">6.</span> <span class="nav-text">Connect-jdbc Null Value异常</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
